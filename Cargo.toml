@@ -19,7 +19,8 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tokio_unstable)'] }
 edition = "2024"
 rust-version = "1.87"
 license = "MIT"
-repository = "https://github.com/z-galaxy/zbus/"
+repository = "https://github.com/enz1m/enzim-zbus"
+homepage = "https://github.com/enz1m/enzim-zbus"
 
 [profile.bench]
 debug = true
