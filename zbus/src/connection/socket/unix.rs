@@ -1,3 +1,4 @@
+// Modified by enzUI contributors. See FORK.md.
 #[cfg(not(feature = "tokio"))]
 use async_io::Async;
 #[cfg(target_os = "linux")]
@@ -281,7 +282,14 @@ fn fd_recvmsg(fd: BorrowedFd<'_>, buffer: &mut [u8]) -> std::io::Result<(usize, 
     let mut cmsg_buffer = [MaybeUninit::uninit(); rustix::cmsg_space!(ScmRights(FDS_MAX))];
     let mut ancillary = RecvAncillaryBuffer::new(&mut cmsg_buffer);
 
-    let msg = recvmsg(fd, &mut iov, &mut ancillary, RecvFlags::empty())?;
+    // Linux can install every SCM_RIGHTS descriptor atomically close-on-exec.
+    // A later fcntl(F_SETFD) is too late in a multi-threaded process: another
+    // thread may fork+exec between this syscall and that normalization.
+    #[cfg(target_os = "linux")]
+    let flags = RecvFlags::CMSG_CLOEXEC;
+    #[cfg(not(target_os = "linux"))]
+    let flags = RecvFlags::empty();
+    let msg = recvmsg(fd, &mut iov, &mut ancillary, flags)?;
     if msg.bytes == 0 {
         return Err(std::io::Error::new(
             std::io::ErrorKind::BrokenPipe,
