@@ -62,14 +62,13 @@ cargo bench
 # Fuzz testing (requires nightly and cargo-fuzz)
 cargo install cargo-fuzz
 cargo fuzz run --fuzz-dir zvariant/fuzz dbus
-cargo fuzz run --fuzz-dir zvariant/fuzz --features gvariant gvariant
 ```
 
 ## Workspace Architecture
 
 ### Core Crates
 - **zbus**: Main D-Bus API (connection, proxy, object server)
-- **zvariant**: D-Bus/GVariant serialization with serde integration
+- **zvariant**: D-Bus serialization (GVariant support deprecated — see the zgvariant crate)
 - **zbus_names**: Type-safe D-Bus name handling
 - **zbus_macros**: Procedural macros for `#[interface]` and `#[proxy]`
 - **zbus_xml**: D-Bus introspection XML handling
@@ -117,6 +116,9 @@ zbus/src/
 - **Changelog**: `CHANGELOG.md` files are managed by [release-plz] — do **not** hand-edit
   them. Write a good commit message (conventional-commits-ish) and release-plz will
   generate the entry at release time.
+- **Changelog-skip trailer**: end a commit message with a `Changelog: skip` git trailer to
+  keep it out of the user-facing changelog (use for AI-workflow artifacts such as design docs
+  and implementation plans).
 - **Testing**: Integration tests require D-Bus session bus
 - **Cross-platform**: Validate changes work on Linux, Windows, macOS
 - **Dependencies**: Check compatibility with async runtimes and optional features

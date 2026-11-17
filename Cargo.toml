@@ -37,6 +37,7 @@ zbus_xml = { path = "./zbus_xml" }
 zbus = { path = "./zbus" }
 
 # 3rd party
+zcheapstr = { version = "1.0.0", features = ["serde"] }
 snakecase = "0.1.0"
 pretty_assertions = "1.4"
 clap = { version = "4.5.4", features = ["derive", "wrap_help"] }
@@ -91,7 +92,7 @@ criterion = { version = "5.0.0", package = "codspeed-criterion-compat" }
 doc-comment = "0.3.3"
 proc-macro2 = "1.0.81"
 proc-macro-crate = "3.2.0"
-syn = { version = "2.0.64", features = ["extra-traits", "full"] }
+syn = { version = "3.0", features = ["extra-traits", "full"] }
 quote = "1.0.36"
 static_assertions = "1.1.0"
 async-recursion = "1.1.1"

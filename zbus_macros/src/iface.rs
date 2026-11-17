@@ -204,7 +204,7 @@ impl MethodInfo {
             .first()
             .ok_or_else(|| Error::new_spanned(ident, "not &self method"))?
         {
-            r.mutability.is_some()
+            matches!(r.kind, syn::ReceiverKind::Reference(_, _, Some(_)))
         } else if is_signal {
             false
         } else {
@@ -352,7 +352,7 @@ pub fn expand(args: Punctuated<Meta, Token![,]>, mut input: ItemImpl) -> syn::Re
                 *item = ImplItem::Fn(ImplItemFn {
                     attrs,
                     vis,
-                    defaultness: None,
+                    modifiers: syn::FnModifiers::default(),
                     sig,
                     // This empty block will be replaced below.
                     block: parse_quote!({}),
@@ -439,6 +439,7 @@ pub fn expand(args: Punctuated<Meta, Token![,]>, mut input: ItemImpl) -> syn::Re
             reply,
             member_name,
             cfg_attrs,
+            doc_attrs,
             ..
         } = method_info;
 
@@ -471,7 +472,14 @@ pub fn expand(args: Punctuated<Meta, Token![,]>, mut input: ItemImpl) -> syn::Re
                 *method_clone.sig.inputs.first_mut().unwrap() = parse_quote!(&self);
                 method_clone.vis = Visibility::Inherited;
                 let sig = &method_clone.sig;
+                let signal_docs = if doc_attrs.is_empty() {
+                    let doc = format!("Emit the “{member_name}” signal.");
+                    quote! { #[doc = #doc] }
+                } else {
+                    quote! { #(#doc_attrs)* }
+                };
                 signals_trait_methods.extend(quote! {
+                    #signal_docs
                     #sig;
                 });
                 method_clone.block = parse_quote!({

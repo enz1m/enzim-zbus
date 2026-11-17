@@ -2,16 +2,24 @@
 
 [![](https://docs.rs/zvariant/badge.svg)](https://docs.rs/zvariant/) [![](https://img.shields.io/crates/v/zvariant)](https://crates.io/crates/zvariant)
 
+> **Deprecated:** zvariant is merged into [zbus] as of zbus 6.0 and receives no further releases.
+> Depend on `zbus = { version = "6", default-features = false }` instead, which provides the D-Bus
+> wire format without the D-Bus communication API, and use `zbus::wire` in place of `zvariant`
+> (the common types and derives are at the `zbus` root too). GVariant support lives on in the
+> [zgvariant] crate. The [upgrade guide] covers the move, including renames such as `Value` to
+> `Variant`.
+
 This crate provides API for encoding/decoding of data to/from [D-Bus wire format][dwf]. This binary
 wire format is simple and very efficient and hence useful outside of D-Bus context as well. A
 modified form of this format, [GVariant] is very commonly used for efficient storage of arbitrary
-data and is also supported by this crate (if you enable `gvariant` cargo feature).
+data. GVariant support is deprecated and will be removed in 6.0 — use the [zgvariant] crate
+instead.
 
 Since version 2.0, the API is [serde]-based and hence you'll find it very intuitive if you're
 already familiar with serde. If you're not familiar with serde, you may want to first read its
 [tutorial] before learning further about this crate.
 
-**Status:** Stable.
+**Status:** Deprecated.
 
 ## Example code
 
@@ -24,8 +32,6 @@ use serde::{Deserialize, Serialize};
 
 // All serialization and deserialization API, needs a context.
 let ctxt = Context::new_dbus(LE, 0);
-// You can also use the more efficient GVariant format:
-// let ctxt = Context::new_gvariant(LE, 0);
 
 // i16
 let encoded = to_bytes(ctxt, &42i16).unwrap();
@@ -165,15 +171,19 @@ accomplish. However, community contribution can change that. 😊
 
 | Feature | Description |
 | ---     | ----------- |
-| gvariant | Enable [GVariant] format support |
+| gvariant | **Deprecated:** GVariant support (moved to [zgvariant]; removed in 6.0) |
 | arrayvec | Implement `Type` for [`arrayvec::ArrayVec`] and [`arrayvec::ArrayString`] |
 | enumflags2 | Implement `Type` for [`enumflags2::BitFlags`]`<F>` |
 | option-as-array | Enable `Option<T>` (de)serialization using array encoding |
 
-`gvariant` features conflicts with `option-as-array` and hence should not be enabled together.
+`gvariant` features conflicts with `option-as-array` and hence should not be enabled together
+(the `gvariant` feature is deprecated).
 
 [dwf]: https://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-marshaling
 [GVariant]: https://developer.gnome.org/documentation/specifications/gvariant-specification-1.0.html
+[zgvariant]: https://crates.io/crates/zgvariant
+[zbus]: https://crates.io/crates/zbus
+[upgrade guide]: https://z-galaxy.github.io/zbus/upgrading-to-6.html
 [serde]: https://crates.io/crates/serde
 [tutorial]: https://serde.rs/
 [toplevel functions]: https://docs.rs/zvariant/latest/zvariant/#functions
