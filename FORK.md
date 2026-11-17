@@ -1,7 +1,9 @@
 # Fork provenance
 
 - Upstream: https://github.com/z-galaxy/zbus
-- Base: `39483146d1e625a0a6da297b3aa1749ddf4bfe2a`
+- Base: `39483146d1e625a0a6da297b3aa1749ddf4bfe2a`, with the upstream `zbus-5`
+  maintenance branch (zbus 5.19.0 and later 5.x fixes) merged in. Upstream
+  history is merged, never rebased.
 - Branch: `enzim`; crate names and upstream ancestry are unchanged.
 - License: MIT. Upstream license files and notices are retained.
 - Fork author and signer: Bernard, [enz1m](https://github.com/enz1m).
